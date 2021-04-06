@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - master
+      - v1
     paths:
       - "package/**"
   pull_request:
     branches:
       - master
-      - nullsafety
+      - v1
     paths:
       - "package/**"
 
