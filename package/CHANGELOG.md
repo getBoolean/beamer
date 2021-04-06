@@ -1,3 +1,7 @@
+# 1.0.0-dev.0
+
+- branch from `v0.11.0+1`
+
 # 0.11.0+1
 
 - add missing ToC titles
