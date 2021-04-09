@@ -1,6 +1,14 @@
-# 1.0.0-dev.0
+# 1.0.0-pre.1.0
 
-- branch from `v0.11.0+1`
+- merge `v0.11.2`
+
+# 0.11.2
+
+- **Fix** lost `navigationNotifier` on rebuilds with nested `Beamer`s
+
+# 0.11.1
+
+- **Fix** possibly null `_currentLocation`
 
 # 0.11.0+1
 
