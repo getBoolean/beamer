@@ -34,7 +34,8 @@ class Beamer extends StatefulWidget {
 
 class BeamerState extends State<Beamer> {
   BeamerRouterDelegate get routerDelegate => widget.routerDelegate;
-  BeamLocation get currentLocation => widget.routerDelegate.currentLocation;
+  BeamLocation get currentBeamLocation =>
+      widget.routerDelegate.currentBeamLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +91,7 @@ extension BeamerExtensions on BuildContext {
   void beamBack() => Beamer.of(this).beamBack();
 
   /// See [BeamerRouterDelegate.currentLocation]
-  BeamLocation get currentBeamLocation => Beamer.of(this).currentLocation;
+  BeamLocation get currentBeamLocation => Beamer.of(this).currentBeamLocation;
 
   /// See [BeamerRouterDelegate.currentPages]
   List<BeamPage> get currentBeamPages => Beamer.of(this).currentPages;

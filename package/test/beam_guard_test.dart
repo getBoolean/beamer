@@ -154,12 +154,12 @@ void main() {
           routeInformationParser: BeamerRouteInformationParser(),
         ));
 
-        expect(router.currentLocation, isA<Location1>());
+        expect(router.currentBeamLocation, isA<Location1>());
 
         router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
         await tester.pump();
 
-        expect(router.currentLocation, isA<CustomStateLocation>());
+        expect(router.currentBeamLocation, isA<CustomStateLocation>());
       });
 
       testWidgets('guard beamToNamed changes the location on build',
@@ -193,13 +193,14 @@ void main() {
           routeInformationParser: BeamerRouteInformationParser(),
         ));
 
-        expect(router.currentLocation, isA<Location1>());
+        expect(router.currentBeamLocation, isA<Location1>());
 
         router.beamTo(Location2(BeamState.fromUri(Uri.parse('/l2'))));
         await tester.pump();
 
-        expect(router.currentLocation, isA<CustomStateLocation>());
-        expect((router.currentLocation as CustomStateLocation).state.customVar,
+        expect(router.currentBeamLocation, isA<CustomStateLocation>());
+        expect(
+            (router.currentBeamLocation as CustomStateLocation).state.customVar,
             equals('123'));
       });
     });
