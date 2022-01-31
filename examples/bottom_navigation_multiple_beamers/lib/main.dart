@@ -252,6 +252,10 @@ class _AppScreenState extends State<AppScreen> {
             setState(() => currentIndex = index);
 
             routerDelegates[currentIndex].update(rebuild: false);
+          } else {
+            routerDelegates[currentIndex].beamToNamed(
+              routerDelegates[currentIndex].initialPath,
+            );
           }
         },
       ),
