@@ -174,6 +174,8 @@ class ArticlesLocation extends BeamLocation<BeamState> {
 
 // APP
 class AppScreen extends StatefulWidget {
+  const AppScreen({Key? key}) : super(key: key);
+
   @override
   _AppScreenState createState() => _AppScreenState();
 }
@@ -268,7 +270,7 @@ class MyApp extends StatelessWidget {
     initialPath: '/books',
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '*': (context, state, data) => AppScreen(),
+        '*': (context, state, data) => const AppScreen(),
       },
     ),
   );
