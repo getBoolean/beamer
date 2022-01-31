@@ -292,4 +292,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void main() => runApp(MyApp());
+void main() {
+  Beamer.setPathUrlStrategy();
+  runApp(MyApp());
+}
