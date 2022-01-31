@@ -184,6 +184,7 @@ class _AppScreenState extends State<AppScreen> {
   final routerDelegates = [
     BeamerDelegate(
       initialPath: '/books',
+      updateFromParent: false,
       locationBuilder: (routeInformation, _) {
         if (routeInformation.location!.contains('books')) {
           return BooksLocation(routeInformation);
