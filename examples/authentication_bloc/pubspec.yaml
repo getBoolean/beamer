@@ -1,0 +1,33 @@
+name: authentication_bloc
+description: Authentication bloc example app.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  beamer:
+    path: ../../package
+
+  bloc: ^8.0.1
+  flutter_bloc: ^8.0.0
+  hydrated_bloc: ^8.0.0
+  path_provider: ^2.0.1
+  formz: ^0.4.0
+
+  authentication_repository:
+    path: packages/authentication_repository
+  user_repository:
+    path: packages/user_repository
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

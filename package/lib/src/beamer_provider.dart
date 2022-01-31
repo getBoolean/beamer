@@ -1,14 +1,14 @@
-import 'package:beamer/src/beamer_router_delegate.dart';
+import 'package:beamer/src/beamer_delegate.dart';
 import 'package:flutter/widgets.dart';
 
-/// Provides [BeamerRouterDelegate] to the `*App.router` Widget.
+/// Provides [BeamerDelegate] to the `*App.router` Widget.
 ///
 /// This is useful when using `builder` in the `*App.router` widget.
 /// Then, if using Beamer the regular way, `Beamer.of(context)` will not exist.
 /// The way to solve it is by using `BeamerProvider` above `*App.router`:
 ///
 /// ```dart
-/// final _routerDelegate = BeamerRouterDelegate(...);
+/// final _routerDelegate = BeamerDelegate(...);
 ///
 /// @override
 /// Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ import 'package:flutter/widgets.dart';
 ///     routerDelegate: _routerDelegate
 ///     child: MaterialApp.router(
 ///       routerDelegate: _routerDelegate,
-///       routeInformationParser: BeamerRouteInformationParser(...),
+///       routeInformationParser: BeamerParser(...),
 ///       ...
 ///     )
 ///   );
@@ -24,15 +24,21 @@ import 'package:flutter/widgets.dart';
 ///
 /// ```
 class BeamerProvider extends InheritedWidget {
-  BeamerProvider({
+  /// Creates a [BeamerProvider] with specified properties.
+  ///
+  /// [routerDelegate] is required because it is the object to provide down the tree.
+  const BeamerProvider({
     Key? key,
     required this.routerDelegate,
     required Widget child,
   }) : super(key: key, child: child);
 
   /// Responsible for beaming, updating and rebuilding the page stack.
-  final BeamerRouterDelegate routerDelegate;
+  final BeamerDelegate routerDelegate;
 
+  /// Obtain the nearest [BeamerProvider].
+  ///
+  /// See [BuildContext.dependOnInheritedWidgetOfExactType].
   static BeamerProvider? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<BeamerProvider>();
 

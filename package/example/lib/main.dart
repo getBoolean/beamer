@@ -1,40 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:beamer/beamer.dart';
 
 // DATA
-const List<Map<String, String>> books = [
-  {
-    'id': '1',
-    'title': 'Stranger in a Strange Land',
-    'author': 'Robert A. Heinlein',
-  },
-  {
-    'id': '2',
-    'title': 'Foundation',
-    'author': 'Isaac Asimov',
-  },
-  {
-    'id': '3',
-    'title': 'Fahrenheit 451',
-    'author': 'Ray Bradbury',
-  },
+class Book {
+  const Book(this.id, this.title, this.author);
+
+  final int id;
+  final String title;
+  final String author;
+}
+
+const List<Book> books = [
+  Book(1, 'Stranger in a Strange Land', 'Robert A. Heinlein'),
+  Book(2, 'Foundation', 'Isaac Asimov'),
+  Book(3, 'Fahrenheit 451', 'Ray Bradbury'),
 ];
 
 // SCREENS
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Screen'),
+        title: const Text('Home Screen'),
       ),
       body: Center(
         child: ElevatedButton(
-          //onPressed: () => context.beamToNamed('/books'),
-          onPressed: () => context.currentBeamLocation.state = BeamState(
-            pathBlueprintSegments: ['books'],
-          ),
-          child: Text('See books'),
+          onPressed: () => context.beamToNamed('/books'),
+          child: const Text('See books'),
         ),
       ),
     );
@@ -42,29 +38,21 @@ class HomeScreen extends StatelessWidget {
 }
 
 class BooksScreen extends StatelessWidget {
+  const BooksScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final titleQuery =
-        context.currentBeamLocation.state.queryParameters['title'] ?? '';
     return Scaffold(
       appBar: AppBar(
-        title: Text('Books'),
+        title: const Text('Books'),
       ),
       body: ListView(
         children: books
-            .where((book) =>
-                book['title'].toLowerCase().contains(titleQuery.toLowerCase()))
             .map(
               (book) => ListTile(
-                title: Text(book['title']),
-                subtitle: Text(book['author']),
-                //onTap: () => context.beamToNamed('/books/${book['id']}'),
-                onTap: () => context.currentBeamLocation.update(
-                  (state) => state.copyWith(
-                    pathBlueprintSegments: ['books', ':bookId'],
-                    pathParameters: {'bookId': book['id']},
-                  ),
-                ),
+                title: Text(book.title),
+                subtitle: Text(book.author),
+                onTap: () => context.beamToNamed('/books/${book.id}'),
               ),
             )
             .toList(),
@@ -74,71 +62,82 @@ class BooksScreen extends StatelessWidget {
 }
 
 class BookDetailsScreen extends StatelessWidget {
-  BookDetailsScreen({
-    this.bookId,
-  }) : book = books.firstWhere((book) => book['id'] == bookId);
+  const BookDetailsScreen({Key? key, required this.book}) : super(key: key);
 
-  final String bookId;
-  final Map<String, String> book;
+  final Book? book;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book['title']),
+        title: Text(book?.title ?? 'Not Found'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text('Author: ${book['author']}'),
-      ),
+      body: book != null
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Author: ${book!.author}'),
+            )
+          : const SizedBox.shrink(),
     );
   }
 }
 
 // LOCATIONS
-class BooksLocation extends BeamLocation {
-  BooksLocation(BeamState state) : super(state);
+class BooksLocation extends BeamLocation<BeamState> {
+  @override
+  List<Pattern> get pathPatterns => ['/books/:bookId'];
 
   @override
-  List<String> get pathBlueprints => ['/books/:bookId'];
-
-  @override
-  List<BeamPage> pagesBuilder(BuildContext context, BeamState state) => [
-        BeamPage(
-          key: ValueKey('home'),
-          child: HomeScreen(),
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final pages = [
+      const BeamPage(
+        key: ValueKey('home'),
+        title: 'Home',
+        child: HomeScreen(),
+      ),
+      if (state.uri.pathSegments.contains('books'))
+        const BeamPage(
+          key: ValueKey('books'),
+          title: 'Books',
+          child: BooksScreen(),
         ),
-        if (state.uri.pathSegments.contains('books'))
-          BeamPage(
-            key: ValueKey('books-${state.queryParameters['title'] ?? ''}'),
-            child: BooksScreen(),
-          ),
-        if (state.pathParameters.containsKey('bookId'))
-          BeamPage(
-            key: ValueKey('book-${state.pathParameters['bookId']}'),
-            child: BookDetailsScreen(
-              bookId: state.pathParameters['bookId'],
-            ),
-          ),
-      ];
+    ];
+    final String? bookIdParameter = state.pathParameters['bookId'];
+    if (bookIdParameter != null) {
+      final bookId = int.tryParse(bookIdParameter);
+      final book = books.firstWhereOrNull((book) => book.id == bookId);
+      pages.add(
+        BeamPage(
+          key: ValueKey('book-$bookIdParameter'),
+          title: 'Book #$bookIdParameter',
+          child: BookDetailsScreen(book: book),
+        ),
+      );
+    }
+    return pages;
+  }
 }
 
 // APP
 class MyApp extends StatelessWidget {
-  final routerDelegate = BeamerRouterDelegate(
-    locationBuilder: (state) => BooksLocation(state),
+  MyApp({Key? key}) : super(key: key);
+
+  final routerDelegate = BeamerDelegate(
+    locationBuilder: BeamerLocationBuilder(
+      beamLocations: [BooksLocation()],
+    ),
+    notFoundRedirectNamed: '/books',
   );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerDelegate: routerDelegate,
-      routeInformationParser: BeamerRouteInformationParser(),
+      routeInformationParser: BeamerParser(),
       backButtonDispatcher:
           BeamerBackButtonDispatcher(delegate: routerDelegate),
     );
   }
 }
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
