@@ -44,12 +44,12 @@ class BooksScreen extends StatelessWidget {
       body: ListView(
         children: books
             .map((book) => ListTile(
-                  title: Text(book['title']),
-                  subtitle: Text(book['author']),
+                  title: Text(book['title']!),
+                  subtitle: Text(book['author']!),
                   onTap: () => Beamer.of(context).currentLocation.update(
                         (state) => state.copyWith(
                           pathBlueprintSegments: ['books', ':bookId'],
-                          pathParameters: {'bookId': book['id']},
+                          pathParameters: {'bookId': book['id']!},
                         ),
                       ),
                 ))
@@ -61,7 +61,7 @@ class BooksScreen extends StatelessWidget {
 
 class BookDetailsScreen extends StatelessWidget {
   BookDetailsScreen({
-    this.bookId,
+    required this.bookId,
   }) : book = books.firstWhere((book) => book['id'] == bookId);
 
   final String bookId;
@@ -84,13 +84,13 @@ class ArticlesScreen extends StatelessWidget {
       body: ListView(
         children: articles
             .map((article) => ListTile(
-                  title: Text(article['title']),
-                  subtitle: Text(article['author']),
+                  title: Text(article['title']!),
+                  subtitle: Text(article['author']!),
                   onTap: () => Beamer.of(context)
                       .currentLocation
                       .update((state) => state.copyWith(
                             pathBlueprintSegments: ['articles', ':articleId'],
-                            pathParameters: {'articleId': article['id']},
+                            pathParameters: {'articleId': article['id']!},
                           )),
                 ))
             .toList(),
@@ -101,7 +101,7 @@ class ArticlesScreen extends StatelessWidget {
 
 class ArticleDetailsScreen extends StatelessWidget {
   ArticleDetailsScreen({
-    this.articleId,
+    required this.articleId,
   }) : article = articles.firstWhere((article) => article['id'] == articleId);
 
   final String articleId;
@@ -133,7 +133,7 @@ class BooksLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('book-${state.pathParameters['bookId']}'),
             child: BookDetailsScreen(
-              bookId: state.pathParameters['bookId'],
+              bookId: state.pathParameters['bookId']!,
             ),
           ),
       ];
@@ -155,7 +155,7 @@ class ArticlesLocation extends BeamLocation {
           BeamPage(
             key: ValueKey('articles-${state.pathParameters['articleId']}'),
             child: ArticleDetailsScreen(
-              articleId: state.pathParameters['articleId'],
+              articleId: state.pathParameters['articleId']!,
             ),
           ),
       ];
@@ -163,6 +163,7 @@ class ArticlesLocation extends BeamLocation {
 
 // APP
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() => MyAppState();
 }
